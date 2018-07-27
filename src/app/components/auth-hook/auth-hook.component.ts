@@ -16,9 +16,9 @@ export class AuthHookComponent implements OnInit {
     this.route.queryParams
       .subscribe(params => {
         console.log(params)
-        this.auth.authData.token = params.access_token;
+        this.auth.accessToken = params.access_token;
         console.log(params.scope.split[":"])
-        this.auth.authData.userId = params.scope.split(":")[1];
+        this.auth.userId = params.scope.split(":")[1];
         this.harvestApi.getProfile()
         .subscribe(profile => {
           this.auth.profile = profile;

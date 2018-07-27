@@ -6,7 +6,7 @@
   </div>
 </div>
 
-<h2>Hello {{auth.profile.first_name}} {{auth.profile.last_name}}.</h2>
+<h2>Hello {{auth.profile?.first_name}} {{auth.profile?.last_name}}.</h2>
 <h3>Please enter the data and press calculate button!</h3>
 <form #form="ngForm" (ngSubmit)="getOvertime(form)">
   <div class="form-group row">
@@ -28,14 +28,20 @@
     </div>
   </div>
   <div class="form-group">
+    <div class="custom-control custom-checkbox">
+      <input type="checkbox" class="custom-control-input" id="onlyApproved" name="onlyApproved" ngModel>
+      <label class="custom-control-label" for="onlyApproved">Use only approved timesheets</label>
+    </div>
+  </div>
+  <div class="form-group">
     <input class="btn btn-primary" type="submit" value="calculate"> (this may take a while depending on the desired timespan)
   </div>
 </form>
 
 <div class="mt-5">
-  <p class="h3" *ngIf="result.overtime">Calculated Overtime:
-    <span [ngClass]="result.overtime > 0 ? 'text-success' : 'text-danger'">{{result.overtime | number:'0.0-2' }}</span> hours
-    <a class="small" style="cursor: pointer" role="button" (click)="showDetails = !showDetails">show details</a>
+  <p *ngIf="result.overtime">Calculated Overtime:
+    <span class="h3" [ngClass]="result.overtime > 0 ? 'text-success' : 'text-danger'">{{result.overtime | number:'0.0-2' }}</span> hours
+    <a class="small font-weight-bold" style="cursor: pointer" role="button" (click)="showDetails = !showDetails">show details</a>
   </p>
   <table *ngIf="showDetails" class="table">
     <tr>

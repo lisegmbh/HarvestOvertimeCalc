@@ -8,8 +8,11 @@ export class AuthInterceptor implements HttpInterceptor {
     constructor(private auth: AuthService) { }
 
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let headers = new HttpHeaders().set(`Authorization`, `Bearer ${this.auth.authData.token}`);
-        headers = headers.set(`Harvest-Account-ID`, this.auth.authData.userId);
+        let headers = new HttpHeaders();
+        if (this.auth.isAuth()) {
+            headers = headers.set(`Authorization`, `Bearer ${this.auth.accessToken}`);
+            headers = headers.set(`Harvest-Account-ID`, this.auth.userId);
+        }
         const newRequest = request.clone({ headers: headers });
 
         return next.handle(newRequest);

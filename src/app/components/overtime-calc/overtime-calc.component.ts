@@ -36,11 +36,12 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
 
   public ngAfterViewInit(): void {
     setTimeout(() =>
-    this.form.setValue({
-      to: new Date().toISOString().split('T')[0],
-      from: new Date(this.auth.profile.created_at).toISOString().split('T')[0],
-      hoursPerWeek: 40
-    })
+      this.form.setValue({
+        to: new Date().toISOString().split('T')[0],
+        from: new Date(this.auth.profile.created_at).toISOString().split('T')[0],
+        hoursPerWeek: 40,
+        onlyApproved: false
+      })
   );
   }
 
@@ -50,7 +51,7 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
     const from = new Date(form.value.from);
     const to = new Date(form.value.to);
 
-    this.harvestApi.getTimesheets(from, to, this.progressSubject).pipe(
+    this.harvestApi.getTimesheets(from, to, form.value.onlyApproved, this.progressSubject).pipe(
       finalize(() => this.showSpinner = false)
     ).subscribe(sheets => {
       this.result = this.timesheetCalculation.calculateResult(form.value.hoursPerWeek, sheets, from, to);

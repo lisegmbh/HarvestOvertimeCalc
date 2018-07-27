@@ -26,9 +26,7 @@ export class AppComponent implements OnInit, AfterViewInit {
   }
 
   public logout(): void {
-    this.auth.authData.token = "";
-    this.auth.authData.userId = "";
-    this.auth.profile = undefined;
+    this.auth.logout();
     this.router.navigate(['/login']);
   }
 

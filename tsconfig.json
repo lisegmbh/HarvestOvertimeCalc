@@ -5,8 +5,7 @@
     "paths": {
       "@app/*": ["src/app/*"],
       "@npm/*": ["node_modules/*"],
-      "@models/*": ["src/app/models/*"],
-      "@environments/*": ["src/environments/*"]
+      "@models/*": ["src/app/models/*"]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
