@@ -34,7 +34,7 @@
 
 <div class="mt-5">
   <p class="h3" *ngIf="result.overtime">Calculated Overtime:
-    <span [ngClass]="result.overtime > 0 ? 'text-success' : 'text-danger'">{{result.overtime}}</span> hours
+    <span [ngClass]="result.overtime > 0 ? 'text-success' : 'text-danger'">{{result.overtime | number:'0.0-2' }}</span> hours
     <a class="small" style="cursor: pointer" role="button" (click)="showDetails = !showDetails">show details</a>
   </p>
   <table *ngIf="showDetails" class="table">
@@ -48,7 +48,7 @@
     </tr>
     <tr>
       <th>Needed hours per Day</th>
-      <td>{{ result.neededHoursperDay }}</td>
+      <td>{{ result.neededHoursPerDay }}</td>
     </tr>
     <tr>
       <th>Needed Hours in Timespan</th>

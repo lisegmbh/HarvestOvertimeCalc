@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { OvertimeCalcComponent } from './overtime-calc.component';
+import { OvertimeCalcComponent } from '@app/components/overtime-calc/overtime-calc.component';
 
 describe('OvertimeCalcComponent', () => {
   let component: OvertimeCalcComponent;

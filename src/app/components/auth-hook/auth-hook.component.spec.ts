@@ -1,6 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AuthHookComponent } from './auth-hook.component';
+import { AuthHookComponent } from '@app/components/auth-hook/auth-hook.component';
 
 describe('AuthHookComponent', () => {
   let component: AuthHookComponent;

@@ -1,4 +1,4 @@
-import { TimeEntry } from "@app/models/timeEntry.model";
+import { TimeEntry } from '@app/models/timeEntry.model';
 
 export interface TimeEntryResponse {
     time_entries: TimeEntry[];

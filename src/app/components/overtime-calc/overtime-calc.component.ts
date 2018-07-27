@@ -5,6 +5,9 @@ import { Subject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { HarvestApiService } from '@app/services/harvest-api.service';
 import { AuthService } from '@app/services/auth.service';
+import { TimeEntry } from '@app/models/timeEntry.model';
+import { TimesheetCalculationResult } from '@app/models/timesheetCalculationResult.model';
+import { TimesheetCalculation } from '@app/services/timesheet-calculation.service';
 
 @Component({
   selector: 'app-overtime-calc',
@@ -15,15 +18,18 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
 
   @ViewChild('form')
   public form: NgForm;
-  public result: any = {};
+  public result: TimesheetCalculationResult = new TimesheetCalculationResult();
   public progressSubject = new Subject<number>();
   public showSpinner: boolean = false;
   public showDetails: boolean = false;
 
-  constructor(public auth: AuthService, private harvestApi: HarvestApiService, private router: Router) { }
+  constructor(public auth: AuthService,
+    private harvestApi: HarvestApiService,
+    private router: Router,
+    private timesheetCalculation: TimesheetCalculation) { }
 
   public ngOnInit() {
-    if(!this.auth.profile) {
+    if (!this.auth.profile) {
       this.router.navigate([`/login`]);
     }
   }
@@ -31,11 +37,11 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
   public ngAfterViewInit(): void {
     setTimeout(() =>
     this.form.setValue({
-      to: new Date().toISOString().split("T")[0],
-      from: new Date(this.auth.profile.created_at).toISOString().split("T")[0],
+      to: new Date().toISOString().split('T')[0],
+      from: new Date(this.auth.profile.created_at).toISOString().split('T')[0],
       hoursPerWeek: 40
     })
-  )
+  );
   }
 
   public getOvertime(form: NgForm): void {
@@ -47,25 +53,7 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
     this.harvestApi.getTimesheets(from, to, this.progressSubject).pipe(
       finalize(() => this.showSpinner = false)
     ).subscribe(sheets => {
-      this.result.neededHoursperDay = form.value.hoursPerWeek / 5;
-      this.result.totalWorkingTime = sheets.reduce((acc, sheet) => acc + sheet.hours, 0);
-      this.result.amountOfWorkingDays = this.getAmountOfWorkingDays(new Date(from), new Date(to));
-      this.result.neededHours = this.result.amountOfWorkingDays * this.result.neededHoursperDay;
-      this.result.overtime = (this.result.totalWorkingTime - this.result.neededHours).toFixed(2);
-    })
+      this.result = this.timesheetCalculation.calculateResult(form.value.hoursPerWeek, sheets, from, to);
+    });
   }
-
-  private getAmountOfWorkingDays(startDate: Date, endDate: Date) {
-    var numWorkDays = 0;
-    var currentDate = startDate;
-    while (currentDate <= endDate) {
-      // Skips Sunday and Saturday
-      if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
-        numWorkDays++;
-      }
-      currentDate.setDate(currentDate.getDate() + 1);
-    }
-    return numWorkDays;
-  }
-
 }
