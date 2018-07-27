@@ -39,9 +39,7 @@ export class AuthService {
 
   public isAuth(): boolean {
     try {
-      const token = this.accessToken;
-      const userId = this.userId;
-      return true;
+      return this.accessToken != null && this.userId != null;
     } catch(e) {
       return false;
     }

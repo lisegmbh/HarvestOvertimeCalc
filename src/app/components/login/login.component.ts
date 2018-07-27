@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
   }
 
   public redirectToHarvest(): void {
-    window.open(`https://id.getharvest.com/oauth2/authorize?client_id=${this.appSettings.environment.oAuthClientId}&response_type=token`);
+    window.open(`https://id.getharvest.com/oauth2/authorize?client_id=${this.appSettings.environment.oAuthClientId}&response_type=token`, "_self");
   }
 
   public setPersonalToken(token: string, userId: string): void {

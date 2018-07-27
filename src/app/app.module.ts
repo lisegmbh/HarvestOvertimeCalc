@@ -23,13 +23,7 @@ const routes: Routes = [
 
 export function loadEnvironment(appSettings: AppSettingsService): () => Promise<any> {
   return (): Promise<any> => {
-    return appSettings.initialize().pipe(
-      tap(prod => {
-        if (prod) {
-          enableProdMode();
-        }
-      })
-    ).toPromise();
+    return appSettings.initialize().toPromise();
   }
 }
 
