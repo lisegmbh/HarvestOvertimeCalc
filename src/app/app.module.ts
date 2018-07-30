@@ -13,12 +13,14 @@ import { AppComponent } from '@app/components/root/app.component';
 import { AuthInterceptor } from '@app/utils/auth.interceptor';
 import { AppSettingsService } from '@app/services/appSettings.service';
 import { tap } from 'rxjs/operators';
+import { HolidayPlannerComponent } from '@app/components/holiday-planner/holiday-planner.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'authHook', component: AuthHookComponent },
-  { path: 'overtime', component: OvertimeCalcComponent }
+  { path: 'overtime', component: OvertimeCalcComponent },
+  { path: 'holidayPlanner', component: HolidayPlannerComponent }
 ];
 
 export function loadEnvironment(appSettings: AppSettingsService): () => Promise<any> {
@@ -32,7 +34,8 @@ export function loadEnvironment(appSettings: AppSettingsService): () => Promise<
     AppComponent,
     LoginComponent,
     AuthHookComponent,
-    OvertimeCalcComponent
+    OvertimeCalcComponent,
+    HolidayPlannerComponent
   ],
   imports: [
     BrowserModule,

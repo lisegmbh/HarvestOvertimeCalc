@@ -1,0 +1,50 @@
+
+<h2>Holiday creator</h2>
+<form (ngSubmit)="applyHoliday(form)" #form="ngForm">
+  <div class="form-group row">
+    <label class="col-sm-4 col-form-label">Start Date*</label>
+    <div class="col-sm-8">
+      <input class="form-control" type="date" ngModel name="fromDate" required>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-4 col-form-label">End Date*</label>
+    <div class="col-sm-8">
+      <input class="form-control" type="date" ngModel name="toDate" required>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-4 col-form-label">Start Time*</label>
+    <div class="col-sm-8">
+      <input class="form-control" type="time" ngModel name="startTime" required>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-4 col-form-label">End Time*</label>
+    <div class="col-sm-8">
+      <input class="form-control" type="time" ngModel name="endTime" required>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-4 col-form-label">Holiday Task*</label>
+    <div class="col-sm-4">
+      <select class="form-control" #selectedProject="ngModel" ngModel name="projectAssignment" placeholder="project" required>
+        <option [ngValue]="projectAssignment" *ngFor="let projectAssignment of projectAssignments">{{projectAssignment.client.name}} - {{projectAssignment.project.name}}</option>
+      </select>
+    </div>
+    <div class="col-sm-4">
+        <select class="form-control" ngModel name="taskAssignment" placeholder="task" required>
+          <option [ngValue]="taskAssignment" *ngFor="let taskAssignment of selectedProject.value.task_assignments">{{taskAssignment.task.name}}</option>
+        </select>
+      </div>
+  </div>
+  <div class="form-group row">
+      <label class="col-sm-4 col-form-label">Note*</label>
+      <div class="col-sm-8">
+        <input class="form-control" type="text" ngModel name="note" required>
+      </div>
+    </div>
+  <div class="form-group">
+    <input class="btn btn-primary" type="submit" value="Create Holiday" [disabled]="form.invalid">
+  </div>
+</form>
