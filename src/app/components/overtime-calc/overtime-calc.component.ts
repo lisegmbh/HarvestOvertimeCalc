@@ -51,8 +51,8 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
     const from = new Date(form.value.from);
     const to = new Date(form.value.to);
 
-    const userId = this.auth.profile.is_project_manager ? this.auth.userId : undefined;
-    this.harvestApi.getTimesheets(userId, from, to, form.value.onlyApproved, this.progressSubject).pipe(
+    const userId = this.auth.profile.is_project_manager ? this.auth.profile.id : undefined;
+    this.harvestApi.getTimesheets(userId.toString(), from, to, form.value.onlyApproved, this.progressSubject).pipe(
       finalize(() => this.showSpinner = false)
     ).subscribe(sheets => {
       this.result = this.timesheetCalculation.calculateResult(form.value.hoursPerWeek, sheets, from, to);

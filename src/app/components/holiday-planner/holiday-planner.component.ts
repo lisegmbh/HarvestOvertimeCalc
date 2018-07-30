@@ -59,7 +59,9 @@ export class HolidayPlannerComponent implements OnInit {
     const result = new Array<string>();
     let currentDate = fromDate;
     while (currentDate <= toDate) {
-      result.push(currentDate.toISOString().split("T")[0]);
+      if (currentDate.getDay() > 0 && currentDate.getDay() < 6) {
+        result.push(currentDate.toISOString().split("T")[0]);
+      }
       currentDate.setDate(currentDate.getDate() + 1);
     }
     return result;
