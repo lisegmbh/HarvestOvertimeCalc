@@ -1,27 +1,4 @@
-<main class="container">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" routerLink="/overtime">HarvestOvertimeCalc</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-      aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mr-auto">
-        <ng-container *ngIf="auth.profile">
-          <li class="nav-item" routerLinkActive="active">
-            <a class="nav-link" routerLink="/overtime">OvertimeCalculator</a>
-          </li>
-          <li class="nav-item" routerLinkActive="active">
-            <a class="nav-link" routerLink="/holidayPlanner">HolidayPlanner</a>
-          </li>
-        </ng-container>
-      </ul>
-      <ul class="navbar-nav">
-        <li class="nav-item" *ngIf="auth.profile">
-          <a class="nav-link" role="button" title="logout" href="#" (click)="$event.preventDefault(); logout()">Logout</a>
-        </li>
-      </ul>
-    </div>
-  </nav>
+<app-nav></app-nav>
+<main class="mt-5 container">
   <router-outlet></router-outlet>
 </main>

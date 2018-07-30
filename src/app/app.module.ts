@@ -14,6 +14,7 @@ import { AuthInterceptor } from '@app/utils/auth.interceptor';
 import { AppSettingsService } from '@app/services/appSettings.service';
 import { tap } from 'rxjs/operators';
 import { HolidayPlannerComponent } from '@app/components/holiday-planner/holiday-planner.component';
+import { NavComponent } from './components/nav/nav.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -35,7 +36,8 @@ export function loadEnvironment(appSettings: AppSettingsService): () => Promise<
     LoginComponent,
     AuthHookComponent,
     OvertimeCalcComponent,
-    HolidayPlannerComponent
+    HolidayPlannerComponent,
+    NavComponent
   ],
   imports: [
     BrowserModule,

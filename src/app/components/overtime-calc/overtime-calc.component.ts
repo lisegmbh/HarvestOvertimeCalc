@@ -8,6 +8,7 @@ import { AuthService } from '@app/services/auth.service';
 import { TimeEntry } from '@app/models/timeEntry.model';
 import { TimesheetCalculationResult } from '@app/models/timesheetCalculationResult.model';
 import { TimesheetCalculation } from '@app/services/timesheet-calculation.service';
+import { SpinnerService } from '@app/services/spinner.service';
 
 @Component({
   selector: 'app-overtime-calc',
@@ -19,14 +20,13 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
   @ViewChild('form')
   public form: NgForm;
   public result: TimesheetCalculationResult = new TimesheetCalculationResult();
-  public progressSubject = new Subject<number>();
-  public showSpinner: boolean = false;
   public showDetails: boolean = false;
 
   constructor(public auth: AuthService,
     private harvestApi: HarvestApiService,
     private router: Router,
-    private timesheetCalculation: TimesheetCalculation) { }
+    private timesheetCalculation: TimesheetCalculation,
+  private spinnerService: SpinnerService) { }
 
   public ngOnInit() {
     if (!this.auth.profile) {
@@ -46,14 +46,14 @@ export class OvertimeCalcComponent implements OnInit, AfterViewInit {
   }
 
   public getOvertime(form: NgForm): void {
-    this.showSpinner = true;
+    this.spinnerService.showSpinner = true;
 
     const from = new Date(form.value.from);
     const to = new Date(form.value.to);
 
     const userId = this.auth.profile.is_project_manager ? this.auth.profile.id.toString() : undefined;
-    this.harvestApi.getTimesheets(userId, from, to, form.value.onlyApproved, this.progressSubject).pipe(
-      finalize(() => this.showSpinner = false)
+    this.harvestApi.getTimesheets(userId, from, to, form.value.onlyApproved, this.spinnerService.progressSubject).pipe(
+      finalize(() => this.spinnerService.showSpinner = false)
     ).subscribe(sheets => {
       this.result = this.timesheetCalculation.calculateResult(form.value.hoursPerWeek, sheets, from, to);
     });

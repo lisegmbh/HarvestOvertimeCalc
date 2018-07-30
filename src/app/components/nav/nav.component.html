@@ -1,0 +1,35 @@
+<div class="backdrop" *ngIf="spinnerService.showSpinner">
+    <span class="spinner"></span>
+    <div class="progress">
+      <div class="progress-bar bg-success" role="progressbar" [style.width.%]="spinnerService.progressSubject | async" aria-valuenow="25" aria-valuemin="0"
+        aria-valuemax="100">Please wait...</div>
+    </div>
+  </div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" routerLink="/overtime">HarvestOvertimeCalc</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+    aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      <ng-container *ngIf="auth.profile">
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" routerLink="/overtime">OvertimeCalculator</a>
+        </li>
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" routerLink="/holidayPlanner">HolidayPlanner</a>
+        </li>
+      </ng-container>
+    </ul>
+    <div class="navbar-text">
+        <span class="mx-3">Hello {{auth.profile?.first_name}} {{auth.profile?.last_name}}</span>
+    </div>
+    <ul class="navbar-nav" *ngIf="auth.profile">
+      <li class="nav-item">
+        <a class="nav-link" role="button" title="logout" href="#" (click)="$event.preventDefault(); logout()">Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>

@@ -1,5 +1,5 @@
-
-<h2>Holiday creator</h2>
+<h2>
+  Holiday creator</h2>
 <form (ngSubmit)="applyHoliday(form)" #form="ngForm">
   <div class="form-group row">
     <label class="col-sm-4 col-form-label">Start Date*</label>
@@ -26,24 +26,71 @@
     </div>
   </div>
   <div class="form-group row">
-    <label class="col-sm-4 col-form-label">Holiday Task*</label>
+    <label class="col-sm-4 col-form-label">Weekdays to use*</label>
+    <div class="col-sm-8">
+      <select class="form-control" multiple size="7" ngModel name="weekDays" required>
+        <option [ngValue]="0">Sunday</option>
+        <option [ngValue]="1">Monday</option>
+        <option [ngValue]="2">Tuesday</option>
+        <option [ngValue]="3">Wednesday</option>
+        <option [ngValue]="4">Thursday</option>
+        <option [ngValue]="5">Friday</option>
+        <option [ngValue]="6">Saturday</option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group row">
+    <label class="col-sm-4 col-form-label">Vacation Task*</label>
     <div class="col-sm-4">
       <select class="form-control" #selectedProject="ngModel" ngModel name="projectAssignment" placeholder="project" required>
         <option [ngValue]="projectAssignment" *ngFor="let projectAssignment of projectAssignments">{{projectAssignment.client.name}} - {{projectAssignment.project.name}}</option>
       </select>
     </div>
     <div class="col-sm-4">
-        <select class="form-control" ngModel name="taskAssignment" placeholder="task" required>
-          <option [ngValue]="taskAssignment" *ngFor="let taskAssignment of selectedProject.value.task_assignments">{{taskAssignment.task.name}}</option>
-        </select>
-      </div>
+      <select class="form-control" ngModel name="taskAssignment" placeholder="task" required>
+        <option [ngValue]="taskAssignment" *ngFor="let taskAssignment of selectedProject.value.task_assignments">{{taskAssignment.task.name}}</option>
+      </select>
+    </div>
   </div>
   <div class="form-group row">
-      <label class="col-sm-4 col-form-label">Note*</label>
-      <div class="col-sm-8">
-        <input class="form-control" type="text" ngModel name="note" required>
+    <label class="col-sm-4 col-form-label">Note*</label>
+    <div class="col-sm-8">
+      <input class="form-control" type="text" ngModel name="note" required>
+    </div>
+  </div>
+  <div class="form-group row">
+    <div class="col-sm-4">
+      <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="handlePublicHolidays" name="handlePublicHolidays" ngModel #handlePublicHolidays="ngModel">
+        <label class="custom-control-label" for="handlePublicHolidays">Handle Public holidays in Timespan</label>
       </div>
     </div>
+    <div class="col-sm-8">
+      <div class="row" [hidden]="!handlePublicHolidays.value">
+        <label class="col-lg-1 col-form-label">Country</label>
+        <div class="col-lg-3">
+          <select class="form-control" ngModel name="countryCode" [disabled]="!handlePublicHolidays.value" [required]="handlePublicHolidays.value">
+            <option *ngFor="let country of countryList" [ngValue]="country.code">{{country.name}}</option>
+          </select>
+        </div>
+        <div class="col-lg-8">
+          <div class="row">
+            <label class="col-sm-4 col-form-label">Holiday Task*</label>
+            <div class="col-sm-4">
+              <select class="form-control" #selectedPublicHolidayProject="ngModel" ngModel name="publicHolidayProjectAssignment" placeholder="project" [disabled]="!handlePublicHolidays.value" [required]="handlePublicHolidays.value">
+                <option [ngValue]="projectAssignment" *ngFor="let projectAssignment of projectAssignments">{{projectAssignment.client.name}} - {{projectAssignment.project.name}}</option>
+              </select>
+            </div>
+            <div class="col-sm-4">
+              <select class="form-control" ngModel name="publicHolidayTaskAssignment" placeholder="task" [disabled]="!handlePublicHolidays.value" [required]="handlePublicHolidays.value">
+                <option [ngValue]="taskAssignment" *ngFor="let taskAssignment of selectedPublicHolidayProject.value.task_assignments">{{taskAssignment.task.name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="form-group">
     <input class="btn btn-primary" type="submit" value="Create Holiday" [disabled]="form.invalid">
   </div>

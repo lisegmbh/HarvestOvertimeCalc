@@ -1,12 +1,14 @@
 import { TaskAssignment } from '@app/models/task.model';
 import { HarvestApiService } from '@app/services/harvest-api.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { map, concatMap } from 'rxjs/operators';
+import { map, concatMap, distinct, mergeMap, reduce, filter, concatAll, toArray, flatMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { AuthService } from '@app/services/auth.service';
 import { ProjectAssignment } from '@app/models/project.model';
-import { from } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
+import { SpinnerService } from '@app/services/spinner.service';
+import * as Holidays from 'date-holidays';
 
 @Component({
   selector: 'app-holiday-planner',
@@ -14,10 +16,13 @@ import { from } from 'rxjs';
   styleUrls: ['./holiday-planner.component.scss']
 })
 export class HolidayPlannerComponent implements OnInit {
+  @ViewChild('form')
+  public form: NgForm;
 
   public projectAssignments: ProjectAssignment[];
+  public countryList: Array<{ code: string, name: string }> = new Array();
 
-  constructor(private auth: AuthService, private router: Router, private harvestApi: HarvestApiService) { }
+  constructor(private auth: AuthService, private router: Router, private harvestApi: HarvestApiService, private spinnerService: SpinnerService) { }
 
   ngOnInit() {
     if (!this.auth.profile) {
@@ -36,35 +41,77 @@ export class HolidayPlannerComponent implements OnInit {
           }))
         )
         .subscribe(sortedResult => {
-          this.projectAssignments = sortedResult
+          this.projectAssignments = sortedResult;
+          this.initCountryList();
+          this.form.setValue({
+            fromDate: new Date().toISOString().split("T")[0],
+            toDate: new Date().toISOString().split("T")[0],
+            startTime: "10:00",
+            endTime: "18:00",
+            weekDays: [1, 2, 3, 4, 5],
+            note: "Vacation",
+            projectAssignment: sortedResult.length ? sortedResult[0] : null,
+            taskAssignment: sortedResult.length ? sortedResult[0].task_assignments[0] : null,
+            handlePublicHolidays: true,
+            countryCode: "DE",
+            publicHolidayProjectAssignment: sortedResult.length ? sortedResult[0] : null,
+            publicHolidayTaskAssignment: sortedResult.length ? sortedResult[0].task_assignments[0] : null,
+          });
         });
     }
   }
 
   public applyHoliday(form: NgForm): void {
-    from(this.getDaysBetweenTwoDates(new Date(form.value.fromDate), new Date(form.value.toDate))).pipe(
-      concatMap(date => this.harvestApi.createTimesheet(form.value.projectAssignment.project.id, form.value.taskAssignment.task.id, date, form.value.startTime, form.value.endTime, form.value.note))
+    this.spinnerService.showSpinner = true;
+    const fromDate = new Date(form.value.fromDate);
+    const toDate = new Date(form.value.toDate);
+    const countryCode: string = form.value.countryCode;
+    const handlePublicHolidays: boolean = form.value.handlePublicHolidays;
+
+    const holidayService = new Holidays(countryCode);
+    const daysToCreate = this.getDaysBetweenTwoDates(fromDate, toDate, form.value.weekDays);
+    from(daysToCreate).pipe(
+      concatMap((date, idx) => {
+        this.spinnerService.progressSubject.next(Math.floor((idx + 1) / daysToCreate.length) * 100);
+        const holiday = holidayService.isHoliday(date);
+        if (handlePublicHolidays && holiday && holiday.type === "public") {
+          return this.harvestApi.createTimesheet(form.value.publicHolidayProjectAssignment.project.id, form.value.publicHolidayTaskAssignment.task.id, date.toISOString().split("T")[0], form.value.startTime, form.value.endTime, holiday.name)
+        } else {
+          return this.harvestApi.createTimesheet(form.value.projectAssignment.project.id, form.value.taskAssignment.task.id, date.toISOString().split("T")[0], form.value.startTime, form.value.endTime, form.value.note)
+        }
+      })
     ).subscribe(
       result => {
 
       }, error => {
         alert("Error creating Entries");
       }, () => {
-        alert("Holiday created");
+        this.spinnerService.showSpinner = false;
       }
     )
   }
 
-  private getDaysBetweenTwoDates(fromDate: Date, toDate: Date): string[] {
-    const result = new Array<string>();
+  private getDaysBetweenTwoDates(fromDate: Date, toDate: Date, allowedWeekDays: number[]): Date[] {
+    const result = new Array<Date>();
     let currentDate = fromDate;
     while (currentDate <= toDate) {
-      if (currentDate.getDay() > 0 && currentDate.getDay() < 6) {
-        result.push(currentDate.toISOString().split("T")[0]);
+      if (allowedWeekDays.includes(currentDate.getDay())) {
+        result.push(new Date(currentDate));
       }
       currentDate.setDate(currentDate.getDate() + 1);
     }
     return result;
+  }
+
+  private initCountryList(): void {
+    const holidayService = new Holidays();
+    this.countryList = Object.entries(holidayService.getCountries())
+      .map(([code, name]) => {
+        return {
+          code: code,
+          name: name as string
+        }
+      })
   }
 
 }

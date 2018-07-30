@@ -20,6 +20,10 @@ export class AppSettingsService {
     return this.env;
   }
 
+  public isInit(): boolean {
+    return this.env != null;
+  }
+
   public initialize(): Observable<boolean> {
     return this.http.get<Environment>(`/env.json`).pipe(
       map(result => {
