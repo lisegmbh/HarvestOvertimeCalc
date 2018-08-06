@@ -10,7 +10,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         const appSettings: AppSettingsService = this.injector.get(AppSettingsService);
-        if (appSettings.isInit() && request.url.startsWith(appSettings.environment.harvestApi)) {
+        if (appSettings.isInit() && request.url.includes("harvest")) {
             let headers = new HttpHeaders();
             if (this.auth.isAuth()) {
                 headers = headers.set(`Authorization`, `Bearer ${this.auth.accessToken}`);
