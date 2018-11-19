@@ -15,12 +15,13 @@ import { AppSettingsService } from '@app/services/appSettings.service';
 import { tap } from 'rxjs/operators';
 import { HolidayPlannerComponent } from '@app/components/holiday-planner/holiday-planner.component';
 import { NavComponent } from './components/nav/nav.component';
+import { OvertimeGuard } from '@app/guards/overtime.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'authHook', component: AuthHookComponent },
-  { path: 'overtime', component: OvertimeCalcComponent },
+  { path: 'overtime', component: OvertimeCalcComponent, canActivate: [OvertimeGuard] },
   { path: 'holidayPlanner', component: HolidayPlannerComponent }
 ];
 
@@ -59,7 +60,8 @@ export function loadEnvironment(appSettings: AppSettingsService): () => Promise<
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
       multi: true
-    }
+    },
+    OvertimeGuard
   ],
   bootstrap: [AppComponent]
 })

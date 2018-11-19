@@ -1,4 +1,4 @@
-import { ProjectAssignmentResponse } from './../models/harvestResponses.model';
+import { ProjectAssignmentResponse, UserResponse } from './../models/harvestResponses.model';
 import { ProjectAssignment } from '@app/models/project.model';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -11,6 +11,7 @@ import { HarvestProfile } from '@app/models/harvestProfile.model';
 import { AppSettingsService } from '@app/services/appSettings.service';
 import { TaskAssignment } from '@app/models/task.model';
 import { AuthService } from '@app/services/auth.service';
+import { User } from '@app/models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -77,6 +78,26 @@ export class HarvestApiService {
     return this.http.get<ProjectAssignmentResponse>(`${this.appSettings.environment.harvestApi}/users/me/project_assignments`).pipe(
       flatMap(response => {
         entries.push(...response.project_assignments);
+        return getNextPack(response.links.next)
+      }),
+      map(() => entries)
+    );
+  }
+
+  public getUsers(): Observable<User[]> {
+    const entries = new Array<User>();
+
+    const getNextPack = (url: string | null): Observable<any> => {
+      return url == null ? of(true) : this.http.get<UserResponse>(url).pipe(
+        flatMap(res => {
+          entries.push(...res.users);
+          return getNextPack(res.links.next);
+        })
+      )
+    }
+    return this.http.get<UserResponse>(`${this.appSettings.environment.harvestApi}/users`).pipe(
+      flatMap(response => {
+        entries.push(...response.users);
         return getNextPack(response.links.next)
       }),
       map(() => entries)

@@ -68,7 +68,7 @@ export class HolidayPlannerComponent implements OnInit {
     const countryCode: string = form.value.countryCode;
     const handlePublicHolidays: boolean = form.value.handlePublicHolidays;
 
-    const holidayService = new Holidays(countryCode);
+    const holidayService = new Holidays.default(countryCode);
     const daysToCreate = this.getDaysBetweenTwoDates(fromDate, toDate, form.value.weekDays);
     from(daysToCreate).pipe(
       concatMap((date, idx) => {
@@ -104,7 +104,7 @@ export class HolidayPlannerComponent implements OnInit {
   }
 
   private initCountryList(): void {
-    const holidayService = new Holidays();
+    const holidayService = new Holidays.default();
     this.countryList = Object.entries(holidayService.getCountries())
       .map(([code, name]) => {
         return {

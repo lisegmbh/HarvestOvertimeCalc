@@ -1,5 +1,13 @@
 <h3>Please enter the data and press calculate button!</h3>
 <form #form="ngForm" (ngSubmit)="getOvertime(form)">
+    <div class="form-group row" *ngIf="isAdmin">
+        <label class="col-sm-4 col-form-label">User</label>
+        <div class="col-sm-8">
+          <select class="form-control" ngModel name="user" (ngModelChange)="onSelectUser($event)">
+            <option [ngValue]="user" *ngFor="let user of (usersObservable | async)">{{user.first_name}} {{user.last_name}}</option>
+          </select>
+        </div>
+      </div>
   <div class="form-group row">
     <label class="col-sm-4 col-form-label">Start Date*</label>
     <div class="col-sm-8">
