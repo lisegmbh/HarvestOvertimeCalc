@@ -3,7 +3,7 @@
     <div class="form-group row" *ngIf="isAdmin">
         <label class="col-sm-4 col-form-label">User</label>
         <div class="col-sm-8">
-          <select class="form-control" ngModel name="user" (ngModelChange)="onSelectUser($event)">
+          <select class="form-control" ngModel name="user" (ngModelChange)="onSelectUser($event)" required>
             <option [ngValue]="user" *ngFor="let user of (usersObservable | async)">{{user.first_name}} {{user.last_name}}</option>
           </select>
         </div>
@@ -33,7 +33,7 @@
     </div>
   </div>
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" value="calculate"> (this may take a while depending on the desired timespan)
+    <input class="btn btn-primary" type="submit" value="calculate" [disabled]="form.invalid"> (this may take a while depending on the desired timespan)
   </div>
 </form>
 
